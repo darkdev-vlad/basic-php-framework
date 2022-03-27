@@ -1,0 +1,19 @@
+{#
+@var year int
+#}
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Basic PHP Framework</title>
+</head>
+<body>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+        {% block footer %}
+            &copy; Copyright 2022 by Vladislav Shadiuk.
+        {% endblock %}
+    </div>
+</body>
+</html>

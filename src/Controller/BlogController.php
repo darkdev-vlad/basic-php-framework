@@ -6,17 +6,25 @@ namespace Xvladx\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 class BlogController
 {
+    private Environment $twig;
+
+    /**
+     * @param Environment $twig
+     */
+    public function __construct(Environment $twig)
+    {
+        $this->twig = $twig;
+    }
+
     public function entryAction(int $year, int $month, int $day): Response
     {
-        $loader = new FilesystemLoader('../templates');
-        $twig = new Environment($loader);
-
-        $test = $twig->render('blog/entry.html.twig', [
-            'year' => $year
+        $test = $this->twig->render('blog/entry.html.twig', [
+            'year' => $year,
+            'month' => $month,
+            'day' => $day
         ]);
 
         return new Response($test);

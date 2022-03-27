@@ -1,14 +1,14 @@
-{#
-@var year int
-#}
-<!doctype html>
+{% extends 'main.html.twig' %}
 
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Basic PHP Framework</title>
-</head>
-<body>
-    {{ year }}
-</body>
-</html>
+{#
+    @var year int
+    @var month int
+    @var day int
+#}
+{% block content %}
+<ol>
+    <li>Day is {{ day }}</li>
+    <li>Month is {{ month }}</li>
+    <li>Year is {{ year }}</li>
+</ol>
+{% endblock %}

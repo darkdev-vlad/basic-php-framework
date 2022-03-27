@@ -1,0 +1,14 @@
+services:
+  twig.loader:
+    class: Twig\Loader\FilesystemLoader
+    arguments:
+      $paths: '../templates'
+
+  Twig\Environment:
+    arguments:
+      $loader: '@twig.loader'
+
+  Xvladx\Controller\:
+    resource: '../src/Controller/*Controller.php'
+    autowire: true
+    public: true
