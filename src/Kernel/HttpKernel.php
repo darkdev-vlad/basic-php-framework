@@ -35,11 +35,15 @@ class HttpKernel
         $parameters = $this->urlMatcher->match($this->requestContext->getPathInfo());
 
         [$controller, $action] = explode('::', $parameters['_controller']);
+        unset($parameters['_controller'], $parameters['_route']);
+
+        $vp = new VariablePreparer();
+        $params = $vp->prepareParameters($controller, $action, $parameters);
 
         $controllerObject = new $controller();
 
         /** @var Response $response */
-        $response = $controllerObject->$action($request);
+        $response = $controllerObject->$action(...$params);
 
         $response->send();
     }
