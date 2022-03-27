@@ -25,7 +25,8 @@ class VariablePreparer
         $reflectionClass = new ReflectionClass($className);
         $method = $reflectionClass->getMethod($actionName);
 
-        //TODO here should be implemented some proper normalizer in normal cases because now it may fail casting value
+        //TODO here should be implemented some proper normalizer in usual cases because now it may fail while converting value
+        //Here's implemented very basic type casting
         foreach ($method->getParameters() as $reflectionParameter) {
             $paramName = $reflectionParameter->getName();
 
