@@ -1,5 +1,11 @@
 FROM php:8.0-apache
 
+RUN apt-get update && \
+    apt-get install -y \
+        libzip-dev \
+        zip \
+  && docker-php-ext-install zip
+
 RUN yes | pecl install apcu xdebug && docker-php-ext-enable xdebug \
         && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
         && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
