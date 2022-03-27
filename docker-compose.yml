@@ -1,0 +1,14 @@
+version: "3.5"
+
+services:
+    basic-php:
+        image: php:8.0-apache
+        build: .
+        environment:
+            - XDEBUG_CONFIG
+            - PHP_IDE_CONFIG
+        ports:
+            - 8080:80
+            - 8443:443
+        extra_hosts:
+            - "host.docker.internal:host-gateway"

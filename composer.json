@@ -1,0 +1,26 @@
+{
+    "name": "xvladx/basic-php-framework",
+    "description": "Test task implementation",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Xvladx\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Vladislav Shadiuk"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "symfony/routing": "^5.4",
+        "symfony/yaml": "^5.4",
+        "symfony/config": "^5.4",
+        "symfony/http-foundation": "^5.4"
+    }
+    ,
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    }
+}
