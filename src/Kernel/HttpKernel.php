@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Loader\YamlFileLoader as RoutingYamlFileLoader;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Throwable;
+use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -67,8 +68,8 @@ class HttpKernel
             [$controller, $action] = explode('::', $parameters['_controller']);
             unset($parameters['_controller'], $parameters['_route']);
 
-            $preparer = new VariablePreparer();
-            $params = $preparer->prepareParameters($controller, $action, $parameters);
+            $parametersResolver = $this->container->get(ParametersResolver::class);
+            $params = $parametersResolver->resolve($controller, $action, $parameters);
 
             $controllerObject = $this->container->get($controller);
 
@@ -96,6 +97,6 @@ class HttpKernel
         /** @var ErrorController $errorController */
         $errorController = $this->container->get(ErrorController::class);
 
-        return $errorController->showErrorAction($errorText);
+        return $errorController->showErrorAction($errorText, $this->container->get(Environment::class));
     }
 }

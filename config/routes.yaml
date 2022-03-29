@@ -1,7 +1,3 @@
-test_routes:
-  path: /
-  controller: Xvladx\Controller\TestController::testAction
-
 blog.specific_entry:
   path: /blog/{year}/{month}/{day}
   controller: Xvladx\Controller\BlogController::entryAction

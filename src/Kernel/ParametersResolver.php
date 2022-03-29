@@ -6,10 +6,15 @@ namespace Xvladx\Kernel;
 
 use ReflectionClass;
 use ReflectionException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Webmozart\Assert\Assert;
 
-class VariablePreparer
+class ParametersResolver
 {
+    public function __construct(private ContainerInterface $container)
+    {
+    }
+
     /**
      * @param string $className
      * @param string $actionName
@@ -18,7 +23,7 @@ class VariablePreparer
      * @throws ParameterException
      * @throws ReflectionException
      */
-    public function prepareParameters(string $className, string $actionName, array $parameters): array
+    public function resolve(string $className, string $actionName, array $parameters): array
     {
         Assert::classExists($className);
 
@@ -29,8 +34,11 @@ class VariablePreparer
         //Here's implemented very basic type casting
         foreach ($method->getParameters() as $reflectionParameter) {
             $paramName = $reflectionParameter->getName();
+            $typeName = $reflectionParameter->getType()?->getName();
+            $serviceExists = $this->container->has($typeName ?? '');
 
             if (
+                !$serviceExists &&
                 !isset($parameters[$paramName]) &&
                 !$reflectionParameter->isOptional()
             ) {
@@ -38,9 +46,12 @@ class VariablePreparer
             }
 
             if (
-                ($type = $reflectionParameter->getType()) !== null
+                $typeName !== null &&
+                $reflectionParameter->getType()?->isBuiltin()
             ) {
-                settype($parameters[$paramName], $type->getName());
+                settype($parameters[$paramName], $typeName);
+            } elseif ($serviceExists && $typeName !== null) {
+                $parameters[$paramName] = $this->container->get($typeName);
             }
         }
 

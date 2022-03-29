@@ -4,7 +4,12 @@ services:
     arguments:
       $paths: '../templates'
 
+  Xvladx\Kernel\ParametersResolver:
+    public: true
+    autowire: true
+
   Twig\Environment:
+    public: true
     arguments:
       $loader: '@twig.loader'
 
