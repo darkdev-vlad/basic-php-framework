@@ -10,6 +10,9 @@ use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Xvladx\Kernel\HttpKernel;
 
+/**
+ * @covers HttpKernel
+ */
 class HttpKernelTest extends TestCase
 {
     /**

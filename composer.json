@@ -31,6 +31,7 @@
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^9.5",
-        "codeception/verify": "^2.2"
+        "codeception/verify": "^2.2",
+        "phpspec/prophecy-phpunit": "^2.0"
     }
 }
