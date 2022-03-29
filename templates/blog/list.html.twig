@@ -1,0 +1,10 @@
+{% extends 'main.html.twig' %}
+
+{# @var records array #}
+{% block content %}
+<ul>
+    {% for idx, year in records %}
+        <li>Blog item for {{ year }} year</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -4,11 +4,13 @@ services:
     basic-php:
         image: php:8.0-apache
         build: .
+        volumes:
+            - './:/var/www/html'
         environment:
             - XDEBUG_CONFIG
             - PHP_IDE_CONFIG
         ports:
-            - 8080:80
-            - 8443:443
+            - '8080:80'
+            - '8443:443'
         extra_hosts:
             - "host.docker.internal:host-gateway"

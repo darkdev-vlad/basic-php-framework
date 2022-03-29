@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xvladx\Controller;
 
+use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -28,6 +29,27 @@ class BlogController
             'year' => $year,
             'month' => $month,
             'day' => $day
+        ]));
+    }
+
+    /**
+     * @param Environment $twig
+     * @return Response
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws Exception
+     */
+    public function listAction(Environment $twig): Response
+    {
+        $randomRecords = [];
+
+        for ($i = 0; $i < 10; $i++) {
+            $randomRecords[] = random_int(1995, 2022);
+        }
+
+        return new Response($twig->render('blog/list.html.twig', [
+            'records' => $randomRecords
         ]));
     }
 }

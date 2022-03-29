@@ -8,6 +8,7 @@ use Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use ReflectionException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader as DependencyInjectionFileLoader;
@@ -18,7 +19,6 @@ use Symfony\Component\Routing\Loader\YamlFileLoader as RoutingYamlFileLoader;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Throwable;
-use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -29,8 +29,12 @@ class HttpKernel
     private RequestContext $requestContext;
     private UrlMatcher $urlMatcher;
     private ContainerInterface $container;
+    private ParametersResolver $parametersResolver;
 
     /**
+     * @param string $configPath
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @throws Exception
      */
     public function __construct(string $configPath)
@@ -48,13 +52,17 @@ class HttpKernel
         $this->requestContext = new RequestContext();
         $this->urlMatcher = new UrlMatcher($routes, $this->requestContext);
         $this->container = $containerBuilder;
+        $this->parametersResolver = $this->container->get(ParametersResolver::class);
     }
 
     /**
-     * @throws NotFoundExceptionInterface
+     * @return void
      * @throws ContainerExceptionInterface
-     * @throws RuntimeError
      * @throws LoaderError
+     * @throws NotFoundExceptionInterface
+     * @throws ParameterException
+     * @throws ReflectionException
+     * @throws RuntimeError
      * @throws SyntaxError
      */
     public function handleRequest(): void
@@ -64,13 +72,10 @@ class HttpKernel
             $this->requestContext->fromRequest($request);
 
             $parameters = $this->urlMatcher->match($this->requestContext->getPathInfo());
-
             [$controller, $action] = explode('::', $parameters['_controller']);
             unset($parameters['_controller'], $parameters['_route']);
 
-            $parametersResolver = $this->container->get(ParametersResolver::class);
-            $params = $parametersResolver->resolve($controller, $action, $parameters);
-
+            $params = $this->parametersResolver->resolve($controller, $action, $parameters);
             $controllerObject = $this->container->get($controller);
 
             /** @var Response $response */
@@ -86,17 +91,27 @@ class HttpKernel
     }
 
     /**
-     * @throws NotFoundExceptionInterface
-     * @throws SyntaxError
+     * @param string $errorText
+     * @return Response
      * @throws ContainerExceptionInterface
-     * @throws RuntimeError
      * @throws LoaderError
+     * @throws NotFoundExceptionInterface
+     * @throws ParameterException
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws ReflectionException
      */
     private function getErrorResponse(string $errorText): Response
     {
+        $parameters = $this->parametersResolver->resolve(
+            ErrorController::class,
+            'showErrorAction',
+            ['errorText' => $errorText]
+        );
+
         /** @var ErrorController $errorController */
         $errorController = $this->container->get(ErrorController::class);
 
-        return $errorController->showErrorAction($errorText, $this->container->get(Environment::class));
+        return $errorController->showErrorAction(...$parameters);
     }
 }
